@@ -1,12 +1,16 @@
+
+
 (define app
   (resources
     ('GET '("hello")
        (lambda (params)
+         (let ((limit (string->number (params 'limit "10")))
+               (page  (string->number (params 'page "0"))))
          (scm->json-string 
-           (db-query 
-             (format #f "SELECT * FROM hellotable LIMIT ~s OFFSET ~s"
-               (or (params 'limit) 10)
-               (or (params 'page) 0))))))
+           (db-query-log-time
+             (format #f
+               "SELECT * FROM hellotable LIMIT ~a OFFSET ~a"
+               limit (* limit page)))))))
     ('GET '("hello2")
        (lambda (params)
          (format #f "HELLO WORLD!")))
